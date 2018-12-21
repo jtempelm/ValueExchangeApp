@@ -13,4 +13,5 @@
     <string name="good">Good</string>
     <string name="bad">Bad</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="kotlinLogo" >The Kotlin Language Logo</string>
 </resources>
