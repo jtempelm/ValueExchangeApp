@@ -10,7 +10,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-
 class ApiDriverActivity : AppCompatActivity() {
 
     private var appProperties: Properties = Properties()
@@ -59,39 +58,51 @@ class ApiDriverActivity : AppCompatActivity() {
     inner class ApiRequest internal constructor(private val verb: String, private val endpoint: String, private val requestBody: String) : AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean {
-            val apiUrl = appProperties.getProperty("rest.api.url")
-            val apiProtocol = appProperties.getProperty("rest.api.protocol")
-            val restApi = URL("$apiProtocol$apiUrl/$endpoint")
+            try {
+                val apiUrl = appProperties.getProperty("rest.api.url")
+                val apiProtocol = appProperties.getProperty("rest.api.protocol")
+                val restApi = URL("$apiProtocol$apiUrl/$endpoint")
 
-            val connection = restApi.openConnection() as HttpURLConnection
-            connection.requestMethod = verb
-            connection.setRequestProperty("Content-Type", "application/json")
+                val connection = restApi.openConnection() as HttpURLConnection //TODO check if connection is bad, then abort with error!
+                connection.requestMethod = verb
+                connection.setRequestProperty("Content-Type", "application/json")
 
-            if (requestBody != "") {
-                connection.outputStream.write(requestBody.toByteArray(Charsets.UTF_8))
+                if (requestBody != "") {
+                    connection.outputStream.write(requestBody.toByteArray(Charsets.UTF_8))
+                }
+
+                connection.connect()
+
+                responseCode = connection.responseCode
+                responseBody = if (responseCode in 200..399) {
+                    connection.inputStream.bufferedReader().readText()
+                } else {
+                    connection.errorStream.bufferedReader().readText()
+                }
+
+                connection.disconnect()
+
+                return true
+            } catch (e: Exception) {
+                return false
             }
-
-            connection.connect()
-
-            responseCode = connection.responseCode
-            responseBody = if (responseCode in 200..399) {
-                connection.inputStream.bufferedReader().readText()
-            } else {
-                connection.errorStream.bufferedReader().readText()
-            }
-
-            connection.disconnect()
-
-            return true
         }
 
         override fun onPostExecute(success: Boolean) {
+            val titleCode: String
+            val message: String
+            if (success) {
+                titleCode = resources.getString(R.string.apiResponse)
+                message = resources.getString(R.string.apiResponseMessage, responseCode) + responseBody
+            } else {
+                titleCode = resources.getString(R.string.apiError)
+                message = resources.getString(R.string.networkError)
+            }
+
             AlertDialog.Builder(this@ApiDriverActivity)
-                .setTitle("Api Response")
-                .setPositiveButton(android.R.string.ok) { dialog, which ->
-                    // continue with delete
-                }
-                .setMessage("ResponseCode: $responseCode\nResponseBody:$responseBody")
+                .setTitle(titleCode.toString())
+                .setPositiveButton(android.R.string.ok) { dialog, which -> }
+                .setMessage(message)
                 .show()
         }
     }

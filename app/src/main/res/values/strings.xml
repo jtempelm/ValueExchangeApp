@@ -10,8 +10,12 @@
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="create_value_exchange">Create Value Exchange</string>
-    <string name="good">Good</string>
-    <string name="bad">Bad</string>
+    <string name="createValueExchange">Create Value Exchange</string>
+    <string name="sendBadRequest">Send Bad Request</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="kotlinLogo" >The Kotlin Language Logo</string>
+    <string name="kotlinLogo">The Kotlin Language Logo</string>
+    <string name="apiError">Api Error</string>
+    <string name="apiResponse">Api Response</string>
+    <string name="apiResponseMessage">ResponseCode: %1$d\nResponseBody:</string>
+    <string name="networkError">A Network Error Occurred</string>
 </resources>
