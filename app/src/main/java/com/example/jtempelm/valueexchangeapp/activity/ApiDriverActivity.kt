@@ -1,16 +1,16 @@
-package com.example.jtempelm.valueexchangeapp
+package com.example.jtempelm.valueexchangeapp.activity
 
 import android.os.AsyncTask
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.example.jtempelm.valueexchangeapp.R
 import kotlinx.android.synthetic.main.activity_api_driver.badRequestButton
 import kotlinx.android.synthetic.main.activity_api_driver.goodRequestButton
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-class ApiDriverActivity : AppCompatActivity() {
+class ApiDriverActivity : EncryptedTransferActivity() {
 
     private var appProperties: Properties = Properties()
     private var responseCode: Int = -1
@@ -31,18 +31,18 @@ class ApiDriverActivity : AppCompatActivity() {
             verb = "POST",
             endpoint = "valueExchange",
             requestBody =
-            "{\n" +
+            encryptRequestBody("{\n" +
                     "\"merchantId\":1,\n" +
                     "\"customerId\":1,\n" +
                     "\"currency\":\"USD\",\n" +
                     "\"amount\":\"5.00\",\n" +
                     "\"productDescription\":\"Pack of socks\"\n" +
-                    "}"
+                    "}")
         )
         apiRequest.execute()
     }
 
-    private fun sendInvalidRequest() {
+    private fun sendInvalidRequest() { //TODO this should be a bad encryption or something
         val apiRequest = ApiRequest(
             verb = "POST",
             endpoint = "valueExchange",

@@ -1,4 +1,4 @@
-package com.example.jtempelm.valueexchangeapp
+package com.example.jtempelm.valueexchangeapp.activity
 
 import android.content.Intent
 import android.os.AsyncTask
@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.util.Patterns
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.jtempelm.valueexchangeapp.R
 import kotlinx.android.synthetic.main.activity_login.emailEditText
 import kotlinx.android.synthetic.main.activity_login.emailInput
 import kotlinx.android.synthetic.main.activity_login.passwordEditText
