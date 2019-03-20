@@ -7,6 +7,7 @@ import com.example.spring.kotlin.util.CipherAlgorithm
 import com.google.gson.Gson
 import java.nio.ByteBuffer
 import java.security.KeyFactory
+import java.security.KeyPair
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
@@ -24,11 +25,10 @@ abstract class EncryptedTransferActivity : AppCompatActivity() {
     private val AES_IV_LENGTH_BYTES = 12
     private val AES_KEY_LENGTH_BYTES = 16 //128 bit key, AES is 128, 192 and 256
 
-    private val RSA_CIPHER = "RSA/ECB/OAEPWithSHA-512AndMGF1Padding"
+    private val RSA_CIPHER = "RSA/ECB/PKCS1Padding"
 
     //TODO We obviously should package this in our app in a better way
-    private val base64EncodedPublicTestKey =
-        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmAMTXnLy2BAZQw/trJSqYpO/e8VX7vzfJThQSV8KF3AMvllZ3qLSzRkFfhHPtlVGfBr3+aY42F2mPKy3x3wuc2QusRniMG2SXZ3vSABI63HUakLUZizwPK+HeW5L3bwf5UOFDJYr7oYkesBXjRapg5XFtrEpEarY0D8hYhHkeOJiPBCJ+dnjS+mq5OG9B+jj1FWrQzyUxqlZrU+Nv6idya8wmEGBvNNyGXbGbFT/fWo6Zgc8mdvhvU6gLup/RT4tI4LbslS/Gl7HtreQMS2Vr9kn7dlrZiLpD1szWC0ThFlXbOPz4PVDgT4+NG7grifbHO2isQCqqoum2YDS1NhPYQIDAQAB"
+    private val base64EncodedSharedAppPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmAMTXnLy2BAZQw/trJSqYpO/e8VX7vzfJThQSV8KF3AMvllZ3qLSzRkFfhHPtlVGfBr3+aY42F2mPKy3x3wuc2QusRniMG2SXZ3vSABI63HUakLUZizwPK+HeW5L3bwf5UOFDJYr7oYkesBXjRapg5XFtrEpEarY0D8hYhHkeOJiPBCJ+dnjS+mq5OG9B+jj1FWrQzyUxqlZrU+Nv6idya8wmEGBvNNyGXbGbFT/fWo6Zgc8mdvhvU6gLup/RT4tI4LbslS/Gl7HtreQMS2Vr9kn7dlrZiLpD1szWC0ThFlXbOPz4PVDgT4+NG7grifbHO2isQCqqoum2YDS1NhPYQIDAQAB"
 
     fun generateBase64EncodedKey(length: Int): String {
         val secureRandom = SecureRandom()
@@ -60,7 +60,8 @@ abstract class EncryptedTransferActivity : AppCompatActivity() {
         val ivWithCipherBytes = byteBuffer.array()
         val encodedCipherText = Base64.getEncoder().encodeToString(ivWithCipherBytes)
 
-        return EncryptedPayload(cipherText = encodedCipherText, iv = Base64.getEncoder().encodeToString(iv), key = encodedKey, algorithm = CipherAlgorithm.AES.cipher, keyPair = null)
+        //key being "" here is important! Otherwise we would build it into out return payload
+        return EncryptedPayload(cipherText = encodedCipherText, iv = Base64.getEncoder().encodeToString(iv), key = "", algorithm = CipherAlgorithm.AES.cipher, keyPair = null)
     }
 
     private fun getAESSecretKey(encodedKey: String): SecretKeySpec {
@@ -117,7 +118,7 @@ abstract class EncryptedTransferActivity : AppCompatActivity() {
 
         val encryptedAesPayload = encryptAES(requestBody, aesKey)
 
-        val rsaEncryptedAesKey = encryptRSA(aesKey, toPublicRSAKey(base64EncodedPublicTestKey))
+        val rsaEncryptedAesKey = encryptRSA(aesKey, toPublicRSAKey(base64EncodedSharedAppPublicKey))
 
         val hybridEncryptedPayload = HybridEncryptedPayload(encryptedKey = rsaEncryptedAesKey, encryptedPayload = encryptedAesPayload)
 
