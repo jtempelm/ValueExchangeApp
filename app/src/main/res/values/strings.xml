@@ -9,8 +9,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="create_value_exchange">Create Value Exchange</string>
-    <string name="createValueExchange">Create Value Exchange</string>
+    <string name="create_value_exchange">ACME co Shop</string>
+    <string name="buy_now">Buy Now</string>
     <string name="sendBadRequest">Send Bad Request</string>
     <string name="title_activity_login">Sign in</string>
     <string name="kotlinLogo">The Kotlin Language Logo</string>
@@ -18,4 +18,8 @@
     <string name="apiResponse">Api Response</string>
     <string name="apiResponseMessage">ResponseCode: %1$d\nResponseBody:</string>
     <string name="networkError">A Network Error Occurred</string>
+    <string name="emptyPrice">$0.00</string>
+    <string name="itemDescription">Item description</string>
+    <string name="itemTitle">Item title</string>
+    <string name="itemImage">Item Image</string>
 </resources>

@@ -3,12 +3,15 @@ package com.example.jtempelm.valueexchangeapp.activity
 import android.os.AsyncTask
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jtempelm.valueexchangeapp.R
-import kotlinx.android.synthetic.main.activity_api_driver.badRequestButton
-import kotlinx.android.synthetic.main.activity_api_driver.goodRequestButton
+import com.example.jtempelm.valueexchangeapp.adapter.ForSaleItem
+import com.example.jtempelm.valueexchangeapp.adapter.ForSaleItemAdapter
+import kotlinx.android.synthetic.main.activity_api_driver.recyclerView
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
+
 
 class ApiDriverActivity : EncryptedTransferActivity() {
 
@@ -18,12 +21,25 @@ class ApiDriverActivity : EncryptedTransferActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_api_driver)
+        setContentView(com.example.jtempelm.valueexchangeapp.R.layout.activity_api_driver)
 
         appProperties.load(baseContext.assets.open("app.properties"))
 
-        goodRequestButton.setOnClickListener { sendValidRequest() }
-        badRequestButton.setOnClickListener { sendInvalidRequest() }
+        val list: List<ForSaleItem> = getData()
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ForSaleItemAdapter(list, this)
+        recyclerView.isNestedScrollingEnabled = false
+    }
+
+    private fun getData(): List<ForSaleItem> {
+        val list = ArrayList<ForSaleItem>()
+        list.add(ForSaleItem("Meow Mix", "https://img.chewy.com/is/image/catalog/149744_MAIN._AC_SL400_V1530105151_.jpg", "$5.00", "I want chicken, I want liver, meow mix meow mix please deliver!"))
+        list.add(ForSaleItem("Pack of Socks", "https://s7.landsend.com/is/image/LandsEnd/461716_A515_LF_M28", "$10.00", "Comfy socks, a whole pack"))
+        list.add(ForSaleItem("Holy Hand Grenade Of Antioch", "https://vignette.wikia.nocookie.net/readyplayerone/images/b/b9/Holy-Hand-Grenade.png/revision/latest", "$9,999,999.99", "20xD10 Holy Damage"))
+        list.add(ForSaleItem("Plush Eagle", "https://cdn3.volusion.com/9nxdj.fchy5/v/vspfiles/photos/WR-18315-2.jpg?1442479716", "$20.00", "'Murica"))
+        list.add(ForSaleItem("Maple Syrup", "https://cdn.shopify.com/s/files/1/0628/8453/products/Leaf_Bottle.jpg?v=1415141353", "$8.00", "The real deal, not that soft core corn syrup knockoff"))
+        list.add(ForSaleItem("Russian Doll", "https://images-na.ssl-images-amazon.com/images/I/71v8RItTZwL._SL1000_.jpg", "$10.00", "Contains smaller dolls of itself"))
+        return list
     }
 
     private fun sendValidRequest() {
@@ -31,26 +47,15 @@ class ApiDriverActivity : EncryptedTransferActivity() {
             verb = "POST",
             endpoint = "valueExchange",
             requestBody =
-            encryptRequestBody("{\n" +
-                    "\"merchantId\":1,\n" +
-                    "\"customerId\":1,\n" +
-                    "\"currency\":\"USD\",\n" +
-                    "\"amount\":\"5.00\",\n" +
-                    "\"productDescription\":\"Pack of socks\"\n" +
-                    "}")
-        )
-        apiRequest.execute()
-    }
-
-    private fun sendInvalidRequest() { //TODO this should be a bad encryption or something
-        val apiRequest = ApiRequest(
-            verb = "POST",
-            endpoint = "valueExchange",
-            requestBody =
-            "{\n" +
-                    "\"merchantId\": 1,\n" +
-                    "\"customerId\": 1\n" +
-                    "}" //create an invalid request simply by omitting required fields
+            encryptRequestBody(
+                "{\n" +
+                        "\"merchantId\":1,\n" +
+                        "\"customerId\":1,\n" +
+                        "\"currency\":\"USD\",\n" +
+                        "\"amount\":\"5.00\",\n" +
+                        "\"productDescription\":\"Pack of socks\"\n" +
+                        "}"
+            )
         )
         apiRequest.execute()
     }
